@@ -1,0 +1,26 @@
+syntax: glob
+
+# Directories
+site_media/media
+search_index
+.sass-cache
+
+# Files
+*~
+*.bak
+*.db
+*.kpf
+*.old
+*.pyc
+*.sassc
+*.swp
+*.tmproj
+local_settings.py
+
+# Mac stuff
+.DS_Store
+
+# Other SCM
+.svn
+.CVS
+.hg*
