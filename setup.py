@@ -30,7 +30,7 @@ setup(name='django-deploy',
     author_email='johnthedebs@gmail.com',
     url='http://github.com/johnthedebs/django-deploy',
     packages=find_packages(),
-    install_requires=['Fabric'],
+    install_requires=get_requirements(),
     classifiers=(
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
