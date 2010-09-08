@@ -25,7 +25,7 @@ def get_requirements():
 
 setup(name='django-deploy',
     version='0.1a',
-    description='Django project deployment utility',
+    description='Django deployment utility',
     author='John Debs',
     author_email='johnthedebs@gmail.com',
     url='http://github.com/johnthedebs/django-deploy',
