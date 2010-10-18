@@ -1,7 +1,7 @@
 from __future__ import with_statement
-from django_deploy.utils import manage
-from fabric.api import cd, local, run
-from fabric.contrib.files import append, upload_template
+from django_deploy.utils import manage, template
+from fabric.api import cd, env, local, run
+from fabric.contrib.files import append, sed, upload_template
 
 
 def build_static_media():
@@ -9,6 +9,10 @@ def build_static_media():
     # Purge the old before building the new
     run("rm -rf /srv/www/%(project_name)s/site_media/static/*" % env)
     manage("build_static --noinput")
+
+def createsuperuser():
+    username = raw_input("Enter name for new super user: ")
+    manage("createsuperuser %s" % username)
 
 def deploy_project():
     "Deploy the project. Requires that the project has been set up first."
@@ -63,7 +67,7 @@ def setup_project():
 def upload_apache_config():
     "Upload a customized apache configuration to the server."
     env.project_site_packages = run('workon %(project_name)s && python -c "from distutils.sysconfig import get_python_lib; print get_python_lib();"' % env)
-    upload_template("deploy/apache.conf", "/etc/apache2/sites-available/%(project_name)s" % env, context=env)
+    upload_template(template("templates/apache.conf"), "/etc/apache2/sites-available/%(project_name)s" % env, context=env)
 
 def upload_project():
     "Uploads the entire project to the server."
@@ -77,3 +81,5 @@ def upload_project():
     with cd("/srv/www/%(project_name)s/%(project_name)s" % env):
         run("tar zxf project.tar.gz")
         run("rm project.tar.gz")
+        # Turn debugging off
+        #sed("setting.py", "DEBUG\w*=\w", "")
