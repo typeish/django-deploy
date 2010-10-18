@@ -24,8 +24,8 @@ def setup_server():
     apt_packages = ['apache2', 'python-psycopg2', 'python-setuptools',
         'postgresql', 'postgresql-contrib', 'libapache2-mod-wsgi', 'git-core',
         'subversion', 'python-imaging', 'postgresql-server-dev-8.4',
-        'build-essential', 'binutils', 'libxml2-dev', 'python-profiler',
-        'screen', 'memcached', 'mercurial', 'proj', ]
+        'build-essential', 'binutils', 'libxml2-dev', 'screen', 'memcached',
+        'mercurial', 'proj', ]
     run("apt-get install -y %s" % " ".join(apt_packages))
     # Install pip, and use it to install virtualenv and virtualenvwrapper
     run("easy_install -U pip")
