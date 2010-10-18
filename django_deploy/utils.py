@@ -57,4 +57,7 @@ def setup_env():
     env.project_branch = branch
 
 def template(path):
-    return DJANGO_DEPLOY_ROOT = os.path.abspath(os.path.dirname(__file__))
+    if path[0] != "/":
+        path = "/" + path
+    return DJANGO_DEPLOY_ROOT + path
+
