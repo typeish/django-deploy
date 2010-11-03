@@ -34,19 +34,19 @@ def manage(command):
         run("workon %s && python manage.py %s" % (env.project_name, command))
 
 def setup_env():
-    deploys = getattr(settings, 'DEPLOYS', None)
+    deploys = getattr(settings, "DEPLOYS", None)
     if not deploys:
         raise CommandError("DEPLOYS has not been defined in your project's settings.py file.")
 
-    default = get_required_val(deploys, 'default', "A default deployment has not been defined in your project's settings file.")
+    default = get_required_val(deploys, "default", "A default deployment has not been defined in your project's settings file.")
 
-    domain = get_required_val(default, 'DOMAIN', "DOMAIN must be defined for your default deployment.")
-    host = get_required_val(default, 'HOST', "HOST must be defined for your default deployment.")
-    name = get_required_val(default, 'NAME', "NAME must be defined for your default deployment.")
-    user = get_required_val(default, 'USER', "USER must be defined for your default deployment.")
+    domain = get_required_val(default, "DOMAIN", "DOMAIN must be defined for your default deployment.")
+    host = get_required_val(default, "HOST", "HOST must be defined for your default deployment.")
+    name = get_required_val(default, "NAME", "NAME must be defined for your default deployment.")
+    user = get_required_val(default, "USER", "USER must be defined for your default deployment.")
 
-    password = default.get('PASSWORD', None)
-    branch = default.get('BRANCH', None) or 'master'
+    password = default.get("PASSWORD", None)
+    branch = default.get("BRANCH", None) or "master"
 
     env.project_domain = domain
     env.hosts = [ host ]
