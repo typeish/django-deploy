@@ -11,8 +11,7 @@ def stop_webserver():
     run("/etc/init.d/apache2 stop")
 
 def restart_webserver():
-    run("/etc/init.d/apache2 stop")
-    run("/etc/init.d/apache2 start")
+    run("/etc/init.d/apache2 restart")
 
 def reload_webserver():
     run("/etc/init.d/apache2 reload")
