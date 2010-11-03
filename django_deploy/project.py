@@ -67,7 +67,7 @@ def setup_project():
 def upload_apache_config():
     "Upload a customized apache configuration to the server."
     env.project_site_packages = run('workon %(project_name)s && python -c "from distutils.sysconfig import get_python_lib; print get_python_lib();"' % env)
-    upload_template(template("templates/apache.conf"), "/etc/apache2/sites-available/%(project_name)s" % env, context=env)
+    upload_template(template("apache.conf"), "/etc/apache2/sites-available/%(project_name)s" % env, context=env)
 
 def upload_project():
     "Uploads the entire project to the server."

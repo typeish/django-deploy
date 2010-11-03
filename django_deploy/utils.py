@@ -3,6 +3,8 @@ from django.core.management.base import CommandError
 from fabric import state
 from fabric.api import env
 from fabric.network import denormalize
+import os.path
+
 
 DJANGO_DEPLOY_ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -56,8 +58,5 @@ def setup_env():
     env.password = password
     env.project_branch = branch
 
-def template(path):
-    if path[0] != "/":
-        path = "/" + path
-    return DJANGO_DEPLOY_ROOT + path
-
+def template(file_path):
+    return os.path.join(DJANGO_DEPLOY_ROOT,  "templates", file_path)
