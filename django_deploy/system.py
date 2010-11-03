@@ -75,6 +75,12 @@ def geodjango_setup():
         with cd("postgis-1.5.1"):
             run("./configure")
             run("make && make install")
+        # Download and install GDAL
+        run("wget http://download.osgeo.org/gdal/gdal-1.7.2.tar.gz")
+        run("tar xzf gdal-1.7.2.tar.gz")
+        with cd("gdal-1.7.2"):
+            run("./configure")
+            run("make && make install")
     # Make sure PostGIS can find GEOS
     run("ldconfig")
 
