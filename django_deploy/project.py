@@ -1,7 +1,9 @@
 from __future__ import with_statement
+from django_deploy.system import *
 from django_deploy.utils import manage, template
 from fabric.api import cd, env, local, run
 from fabric.contrib.files import append, sed, upload_template
+from fabric.operations import put
 
 
 def build_static_media():
