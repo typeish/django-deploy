@@ -1,7 +1,9 @@
 from __future__ import with_statement
+from django_deploy.utils import script
 from fabric.api import cd, run, sudo
 from fabric.colors import yellow
 from fabric.contrib.files import append, contains
+from fabric.operations import put
 
 
 def start_webserver():
@@ -54,6 +56,7 @@ def upgrade_packages():
     sudo("apt-get update -y")
     sudo("apt-get upgrade -y")
 
+# TODO: A lot about this could be more robust...but it works!
 def setup_geodjango():
     "Set up everything the server needs to support projects running GeoDjango"
     install_packages(["proj", ])
@@ -88,19 +91,6 @@ def setup_geodjango():
             sudo("make && make install")
     # Make sure PostGIS can find GEOS
     sudo("ldconfig")
-
-# TODO: Need to get the GeoDjango database stuff working...
-def postgis_database():
-    # Create the database with the proper encoding (Ubuntu 10.04 defaults to ASCII encoding for some reason)
-    # sudo("psql -c \"CREATE DATABASE template_postgis WITH ENCODING = 'UTF-8' TEMPLATE template0;\"", user="postgres")
-    # Set up the template database (from the Django documentation)
-    env.shell = "/bin/bash -c"
-    with sudo("POSTGIS_SQL_PATH=`pg_config --sharedir`/contrib/postgis-1.5", user="postgres"):
-        sudo("createlang -d template_postgis plpgsql # Adding PLPGSQL language support.", user="postgres")
-        sudo("psql -d postgres -c \"UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';\"", user="postgres")
-        sudo("psql -d template_postgis -f $POSTGIS_SQL_PATH/postgis.sql # Loading the PostGIS SQL routines", user="postgres")
-        sudo("psql -d template_postgis -f $POSTGIS_SQL_PATH/spatial_ref_sys.sql", user="postgres")
-        sudo("psql -d template_postgis -c \"GRANT ALL ON geometry_columns TO PUBLIC;\" # Enabling users to alter spatial tables.", user="postgres")
-        sudo("psql -d template_postgis -c \"GRANT ALL ON geography_columns TO PUBLIC;\"", user="postgres")
-        sudo("psql -d template_postgis -c \"GRANT ALL ON spatial_ref_sys TO PUBLIC;\"", user="postgres")
-    env.shell = "/bin/bash -l -c"
+    # Set up template_postgis database
+    put(script("create_template_postgis-1.5.sh"), "/var/lib/postgresql")
+    sudo("/var/lib/postgresql/create_template_postgis-1.5.sh", user="postgres")
