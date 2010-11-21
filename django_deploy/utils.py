@@ -58,5 +58,8 @@ def setup_env():
     env.password = password
     env.project_branch = branch
 
+def script(file_path):
+    return os.path.join(DJANGO_DEPLOY_ROOT,  "scripts", file_path)
+
 def template(file_path):
     return os.path.join(DJANGO_DEPLOY_ROOT,  "templates", file_path)
