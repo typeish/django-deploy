@@ -32,16 +32,16 @@ def setup_server():
     setup_virtualenvwrapper()
     upgrade_packages()
 
-def setup_virtualenvwrapper():
-    "Set up virtualenvwrapper in .bashrc"
+def setup_virtualenvwrapper(profile="~/.profile"):
+    "Set up virtualenvwrapper in the appropriate profile"
     virtualenvwrapper_settings = """
 # virtualenvwrapper settings
 source /usr/local/bin/virtualenvwrapper.sh
 export WORKON_HOME=/srv/virtualenvs
 """
-    if not contains("export WORKON_HOME", "~/.profile"):
+    if not contains("export WORKON_HOME", profile):
         sudo("mkdir -p /srv/virtualenvs")
-        append(virtualenvwrapper_settings, "~/.profile")
+        append(virtualenvwrapper_settings, profile)
     else:
         print(yellow("'export WORKON_HOME' is already present in ~./profile : skipping virtualenvwrapper setup."))
 
