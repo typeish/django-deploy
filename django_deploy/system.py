@@ -1,7 +1,7 @@
 from __future__ import with_statement
 from fabric.api import cd, run, sudo
 from fabric.colors import yellow
-from fabric.contrib.files import contains
+from fabric.contrib.files import append, contains
 
 
 def start_webserver():
@@ -20,15 +20,15 @@ def setup_server():
     "Set up a server for the first time in preparation for deployments."
     upgrade_packages()
     # Install required system packages for deployment, plus some extras
-    apt_packages = ['apache2', 'python-psycopg2', 'python-setuptools',
-        'postgresql', 'postgresql-contrib', 'libapache2-mod-wsgi', 'git-core',
-        'subversion', 'python-imaging', 'postgresql-server-dev-8.4',
-        'build-essential', 'binutils', 'libxml2-dev', 'screen', 'memcached',
-        'mercurial', 'proj', ]
-    run("apt-get install -y %s" % " ".join(apt_packages))
+    apt_packages = ["apache2", "python-psycopg2", "python-setuptools",
+        "postgresql", "postgresql-contrib", "libapache2-mod-wsgi", "git-core",
+        "subversion", "python-imaging", "postgresql-server-dev-8.4",
+        "build-essential", "binutils", "libxml2-dev", "screen", "memcached",
+        "mercurial", ]
+    install_packages(apt_packages)
     # Install pip, and use it to install virtualenv and virtualenvwrapper
-    run("easy_install -U pip")
-    run("pip install -U virtualenv virtualenvwrapper")
+    sudo("easy_install -U pip")
+    sudo("pip install -U virtualenv virtualenvwrapper")
     setup_virtualenvwrapper()
     upgrade_packages()
 
@@ -40,49 +40,54 @@ source /usr/local/bin/virtualenvwrapper.sh
 export WORKON_HOME=/srv/virtualenvs
 """
     if not contains("export WORKON_HOME", "~/.profile"):
-        run("mkdir -p /srv/virtualenvs")
-        append("~/.profile", virtualenvwrapper_settings)
+        sudo("mkdir -p /srv/virtualenvs")
+        append(virtualenvwrapper_settings, "~/.profile")
     else:
         print(yellow("'export WORKON_HOME' is already present in ~./profile : skipping virtualenvwrapper setup."))
 
-def upgrade_packages():
-    "Bring all the installed packages up to date."
-    run("apt-get update -y")
-    run("apt-get upgrade -y")
+def install_packages(packages):
+    "Install packages, given a list of package names"
+    sudo("apt-get install -y %s" % " ".join(packages))
 
-def geodjango_setup():
-    "Set up everything the server needs to support projects running GeoDjango."
-    run("mkdir ~/pkgs")
+def upgrade_packages():
+    "Bring all the installed packages up to date"
+    sudo("apt-get update -y")
+    sudo("apt-get upgrade -y")
+
+def setup_geodjango():
+    "Set up everything the server needs to support projects running GeoDjango"
+    install_packages(["proj", ])
+    run("mkdir -p ~/pkgs")
     with cd("~/pkgs"):
         # http://docs.djangoproject.com/en/dev/ref/contrib/gis/install/#ibex
         # Download and install some more stuff for proj (from the Django documentation)
         run("wget http://download.osgeo.org/proj/proj-datumgrid-1.4.tar.gz")
-        run("mkdir nad")
+        run("mkdir -p nad")
         with cd("nad"):
             run("tar xzf ../proj-datumgrid-1.4.tar.gz")
             run("nad2bin null < null.lla")
-            run("cp null /usr/share/proj")
+            sudo("cp null /usr/share/proj")
         # Download and install the latest GEOS package (http://trac.osgeo.org/geos/).
         # Ubuntu provides a version that is too old for our purposes.
         run("wget http://download.osgeo.org/geos/geos-3.2.2.tar.bz2")
         run("tar xvjf geos-3.2.2.tar.bz2")
         with cd("geos-3.2.2"):
             run("./configure")
-            run("make && make install")
+            sudo("make && make install")
         # Download and install the latest PostGIS package
-        run("wget http://postgis.refractions.net/download/postgis-1.5.1.tar.gz")
-        run("tar xvzf postgis-1.5.1.tar.gz")
-        with cd("postgis-1.5.1"):
+        run("wget http://postgis.refractions.net/download/postgis-1.5.2.tar.gz")
+        run("tar xvzf postgis-1.5.2.tar.gz")
+        with cd("postgis-1.5.2"):
             run("./configure")
-            run("make && make install")
+            sudo("make && make install")
         # Download and install GDAL
-        run("wget http://download.osgeo.org/gdal/gdal-1.7.2.tar.gz")
-        run("tar xzf gdal-1.7.2.tar.gz")
-        with cd("gdal-1.7.2"):
+        run("wget http://download.osgeo.org/gdal/gdal-1.7.3.tar.gz")
+        run("tar xzf gdal-1.7.3.tar.gz")
+        with cd("gdal-1.7.3"):
             run("./configure")
-            run("make && make install")
+            sudo("make && make install")
     # Make sure PostGIS can find GEOS
-    run("ldconfig")
+    sudo("ldconfig")
 
 # TODO: Need to get the GeoDjango database stuff working...
 def postgis_database():
