@@ -24,7 +24,7 @@ def get_requirements():
     return filter(None, lines)
 
 setup(name='django-deploy',
-    version='0.1',
+    version='0.1.0',
     description='Django deployment utility',
     author='John Debs',
     author_email='johnthedebs@gmail.com',
