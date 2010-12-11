@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.management.base import CommandError
 from fabric import state
-from fabric.api import env
+from fabric.api import cd, env, run
 from fabric.network import denormalize
 import os.path
 

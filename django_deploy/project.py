@@ -1,8 +1,8 @@
 from __future__ import with_statement
-from django_deploy.system import *
+from django_deploy.system import reload_webserver
 from django_deploy.utils import manage, template
-from fabric.api import cd, env, local, run
-from fabric.contrib.files import append, sed, upload_template
+from fabric.api import cd, env, local, run, sudo
+from fabric.contrib.files import append, upload_template
 from fabric.operations import put
 
 
@@ -31,7 +31,7 @@ def disable_project():
 
 def enable_project():
     "Enable the site in Apache."
-    sudo("a2dissite %(project_name)s" % env)
+    sudo("a2ensite %(project_name)s" % env)
     reload_webserver()
 
 def install_project_requirements():
