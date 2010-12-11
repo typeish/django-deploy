@@ -37,7 +37,7 @@ def enable_project():
 def install_project_requirements():
     "Install everything in requirements.txt to the project's virtualenv."
     with cd("/srv/www/%(project_name)s/%(project_name)s" % env):
-        sudo("workon %(project_name)s && pip install -U -r requirements.txt" % env)
+        sudo("workon %(project_name)s && pip install -I -r requirements.txt" % env)
 
 def redeploy_project():
     "Delete project code directory and redeploy. Data and logs remain intact."
