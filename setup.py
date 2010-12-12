@@ -1,12 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-import distribute_setup
-
-distribute_setup.use_setuptools()
-
 from setuptools import setup, find_packages
+import os
 
 
 rel_file = lambda *args: os.path.join(os.path.dirname(os.path.abspath(__file__)), *args)
@@ -23,7 +19,8 @@ def get_requirements():
     lines = map(lambda s: s.strip(), data.splitlines())
     return filter(None, lines)
 
-setup(name='django-deploy',
+setup(
+    name='django-deploy',
     version='0.1.0',
     description='Django deployment utility',
     author='John Debs',

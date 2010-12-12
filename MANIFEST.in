@@ -1,0 +1,6 @@
+include license.txt
+include README.md
+include requirements.txt
+recursive-include django_deploy *.py
+recursive-include django_deploy/scripts *.sh
+recursive-include django_deploy/templates *.conf
