@@ -2,7 +2,7 @@ from __future__ import with_statement
 from django_deploy.system import reload_webserver
 from django_deploy.utils import manage, template
 from fabric.api import cd, env, local, run, sudo
-from fabric.contrib.files import append, upload_template
+from fabric.contrib.files import append, exists, upload_template
 from fabric.operations import put
 
 
@@ -26,8 +26,9 @@ def deploy_project():
 
 def disable_project():
     "Disable the site in Apache."
-    sudo("a2dissite %(project_name)s" % env)
-    reload_webserver()
+    if exists("/etc/apache2/sites-available/%(project_name)s" % env):
+        sudo("a2dissite %(project_name)s" % env)
+        reload_webserver()
 
 def enable_project():
     "Enable the site in Apache."
