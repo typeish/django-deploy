@@ -3,7 +3,7 @@ from django.core.management.base import CommandError
 from fabric import state
 from fabric.api import cd, env, run
 from fabric.network import denormalize
-import os.path
+import os.path, time
 
 
 DJANGO_DEPLOY_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -14,6 +14,7 @@ def close_connections():
         if state.output.status:
             print "Disconnecting from %s..." % denormalize(key),
         state.connections[key].close()
+        del state.connections[key]
         if state.output.status:
             print "done."
 
@@ -57,6 +58,7 @@ def setup_env():
     env.user = user
     env.password = password
     env.project_branch = branch
+    env.deploy_time = run("python -c 'import time; print time.strftime(\"%Y-%m-%d-%H-%M\");'")
 
 def script(file_path):
     return os.path.join(DJANGO_DEPLOY_ROOT,  "scripts", file_path)
