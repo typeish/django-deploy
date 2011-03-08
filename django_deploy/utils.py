@@ -8,6 +8,8 @@ import os.path, time
 
 DJANGO_DEPLOY_ROOT = os.path.abspath(os.path.dirname(__file__))
 
+PROJECTS_PATH = "/srv/www/"
+VIRTUALENVS_PATH = "/srv/virtualenvs/"
 
 def close_connections():
     for key in state.connections.keys():
@@ -33,7 +35,7 @@ def get_required_val(dictionary, key, err_msg):
     raise CommandError(err_msg)
 
 def manage(command):
-    with cd("/srv/www/%(project_name)s/%(project_name)s" % env):
+    with cd(env.project_root):
         run("workon %s && python manage.py %s" % (env.project_name, command))
 
 def setup_env():
@@ -51,6 +53,7 @@ def setup_env():
     password = default.get("PASSWORD", None)
     branch = default.get("BRANCH", None) or "master"
 
+    # Essentials
     env.project_domain = domain
     env.hosts = [ host ]
     env.host_string = host
@@ -59,6 +62,10 @@ def setup_env():
     env.password = password
     env.project_branch = branch
     env.deploy_time = run("python -c 'import time; print time.strftime(\"%Y-%m-%d-%H-%M\");'")
+    # Helpers
+    env.deploy_root = os.path.join(PROJECTS_PATH, env.project_name)
+    env.project_root = os.path.join(PROJECTS_PATH, env.project_name, env.project_name)
+    env.virtualenv_dir = os.path.join(VIRTUALENVS_PATH, env.project_name)
 
 def script(file_path):
     return os.path.join(DJANGO_DEPLOY_ROOT,  "scripts", file_path)
