@@ -20,7 +20,7 @@ def get_requirements():
 
 setup(
     name="django-deploy",
-    version="0.1.0",
+    version="0.2.0",
     description="Django deployment utility",
     author="John Debs",
     author_email="johnthedebs@gmail.com",
