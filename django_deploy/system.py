@@ -41,9 +41,9 @@ def setup_virtualenvwrapper(profile="~/.profile"):
 source /usr/local/bin/virtualenvwrapper.sh
 export WORKON_HOME=/srv/virtualenvs
 """
-    if not contains("export WORKON_HOME", profile):
+    if not contains(profile, "export WORKON_HOME"):
         sudo("mkdir -p /srv/virtualenvs")
-        append(virtualenvwrapper_settings, profile)
+        append(profile, virtualenvwrapper_settings)
     else:
         print(yellow("'export WORKON_HOME' is already present in ~./profile : skipping virtualenvwrapper setup."))
 
@@ -92,5 +92,6 @@ def setup_geodjango():
     # Make sure PostGIS can find GEOS
     sudo("ldconfig")
     # Set up template_postgis database
-    put(script("create_template_postgis-1.5.sh"), "/var/lib/postgresql")
-    sudo("/var/lib/postgresql/create_template_postgis-1.5.sh", user="postgres")
+    with cd("/var/lib/postgresql"):
+        put(script("create_template_postgis-1.5.sh"), ".", mode="0755")
+        sudo("./create_template_postgis-1.5.sh", user="postgres")

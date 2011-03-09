@@ -1,9 +1,8 @@
 from __future__ import with_statement
-from django.conf import settings
 from django_deploy.system import reload_webserver
 from django_deploy.utils import manage, template
 from fabric.api import cd, env, local, run, sudo
-from fabric.contrib.files import append, exists, upload_template
+from fabric.contrib.files import exists, upload_template
 from fabric.operations import put
 
 
@@ -11,10 +10,7 @@ def collect_static_media():
     "Collect the static media for the project."
     # Purge the old before building the new
     sudo("rm -rf %(deploy_root)s/site_media/static/*" % env)
-    if "staticfiles" in settings.INSTALLED_APPS:
-        manage("build_static --noinput")
-    else:
-        manage("collectstatic --noinput")
+    manage("collectstatic --noinput")
     sudo("chown -R www-data %(deploy_root)s/site_media" % env)
 
 def createsuperuser():
@@ -99,9 +95,7 @@ def upload_project():
     run("mkdir -p %(project_root)s" % env)
     # Package the appropriate branch, move it to the server, and clean up
     local("git archive --format=tar %(project_branch)s | gzip > project.tar.gz" % env)
-    # Upload to the home directory first, since we can't do `sudo put`
-    put("project.tar.gz", "~")
-    sudo("mv project.tar.gz %(project_root)s/" % env)
+    put("project.tar.gz", "%(project_root)s" % env, use_sudo=True)
     local("rm project.tar.gz")
     # Unpackage the code and clean up
     with cd(env.project_root):

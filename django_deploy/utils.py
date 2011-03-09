@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.management.base import CommandError
 from fabric import state
 from fabric.api import cd, env, run
-from fabric.network import denormalize
+from fabric.network import denormalize, disconnect_all
 import os.path, time
 
 
@@ -11,20 +11,11 @@ DJANGO_DEPLOY_ROOT = os.path.abspath(os.path.dirname(__file__))
 PROJECTS_PATH = "/srv/www/"
 VIRTUALENVS_PATH = "/srv/virtualenvs/"
 
-def close_connections():
-    for key in state.connections.keys():
-        if state.output.status:
-            print "Disconnecting from %s..." % denormalize(key),
-        state.connections[key].close()
-        del state.connections[key]
-        if state.output.status:
-            print "done."
-
 def fab_task(func):
     def new_func(*args, **kwargs):
         setup_env()
         val = func(*args, **kwargs)
-        close_connections()
+        disconnect_all()
         return val
     return new_func
 
