@@ -55,7 +55,7 @@ def setup_env():
     user    = get_required_val(default, "USER", "USER must be defined for your default deployment.")
 
     password = default.get("PASSWORD", None)
-    branch = default.get("BRANCH", "master")
+    branch = default.get("BRANCH", None) or "master"
 
     # Essentials
     env.project_domain = domain

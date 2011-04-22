@@ -89,7 +89,7 @@ def remove_project():
 def sync_and_migrate():
     """
     Runs Django's syncdb management command (without taking user input)
-    and then 
+    and then
     """
     manage("syncdb --noinput")
     if env.uses_south:
