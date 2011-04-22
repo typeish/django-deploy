@@ -40,12 +40,13 @@ def deploy_project():
     disable_debug()
     install_project_requirements()
     collect_static_media()
-    manage("syncdb --noinput")
+    sync_and_migrate()
     enable_project()
 
 def disable_debug():
     with cd(env.project_root):
         sudo("sed -i.bak -r -e 's/^[ \\t]*DEBUG[ \\t]*=[ \\t]*True[ \\t]*$/DEBUG = False/g' settings.py")
+
 def enable_debug():
     with cd(env.project_root):
         sudo("sed -i.bak -r -e 's/^[ \\t]*DEBUG[ \\t]*=[ \\t]*False[ \\t]*$/DEBUG = True/g' settings.py")
@@ -55,6 +56,7 @@ def disable_project():
     if exists("/etc/apache2/sites-available/%(project_name)s" % env):
         sudo("a2dissite %(project_name)s" % env)
         reload_webserver()
+
 def enable_project():
     "Enable the site in Apache."
     if exists("/etc/apache2/sites-available/%(project_name)s" % env):
@@ -83,6 +85,15 @@ def remove_project():
         sudo("rm -rf %(deploy_root)s" % env)
     if exists(env.virtualenv_dir):
         sudo("rmvirtualenv %(project_name)s" % env)
+
+def sync_and_migrate():
+    """
+    Runs Django's syncdb management command (without taking user input)
+    and then 
+    """
+    manage("syncdb --noinput")
+    if env.uses_south:
+        manage("migrate")
 
 def upload_apache_config():
     "Upload a customized apache configuration to the server."

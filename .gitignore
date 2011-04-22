@@ -4,6 +4,7 @@ syntax: glob
 site_media/media
 search_index
 .sass-cache
+*.egg-info
 
 # Files
 *~
